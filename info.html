@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetWiki - Breed Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a3093;
+            --secondary: #a044ff;
+            --accent: #ffc107;
+            --light-bg: #f8f9fa;
+            --dark-text: #2d3436;
+            --light-text: #f5f6fa;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .nav-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .breed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .breed-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .edit-btn {
+            background: var(--accent);
+            color: var(--dark-text);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn:hover {
+            background: #ffab00;
+        }
+        
+        .breed-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        
+        .breed-image {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .breed-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .info-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-section h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        .adoption-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .location-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        select {
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .adoption-centers {
+            margin-top: 1rem;
+        }
+        
+        .center-card {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        .add-center-form {
+            margin-top: 1rem;
+            display: none;
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .add-center-form input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .comments-section {
+            margin-top: 2rem;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .editor-container {
+            display: none;
+            margin-top: 1rem;
+        }
+        
+        .editor-toolbar {
+            background: #f1f1f1;
+            padding: 0.5rem;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .editor-content {
+            min-height: 200px;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            background: white;
+        }
+        
+        .save-btn, .cancel-btn {
+            padding: 0.5rem 1rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .save-btn {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .cancel-btn {
+            background: #ddd;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav">
+            <div class="logo">PetWiki</div>
+            <div class="nav-links">
+                <a href="home.html"><i class="fas fa-home"></i> Home</a>
+                <a href="#"><i class="fas fa-user"></i> Profile</a>
+                <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="breed-header">
+            <h1 class="breed-title" id="breedName">Golden Retriever</h1>
+            <button class="edit-btn" id="editInfoBtn"><i class="fas fa-edit"></i> Edit Info</button>
+        </div>
+        
+        <div class="breed-content">
+            <div>
+                <img src="https://cdn.pixabay.com/photo/2016/12/13/05/15/puppy-1903313_1280.jpg" alt="Breed Image" class="breed-image" id="breedImage">
+                <div class="info-section">
+                    <h3>Quick Facts</h3>
+                    <p><strong>Size:</strong> <span id="breedSize">Medium-Large</span></p>
+                    <p><strong>Lifespan:</strong> <span id="breedLifespan">10-12 years</span></p>
+                    <p><strong>Temperament:</strong> <span id="breedTemperament">Friendly, Intelligent, Devoted</span></p>
+                </div>
+            </div>
+            
+            <div class="breed-info">
+                <div class="info-section">
+                    <h3>Description</h3>
+                    <div id="breedDescription">
+                        <p>The Golden Retriever is a medium-large gun dog that was bred to retrieve shot waterfowl such as ducks and upland game birds during hunting and shooting parties. They are known for their friendly, tolerant attitudes and intelligence.</p>
+                    </div>
+                    <div class="editor-container" id="descEditor">
+                        <div class="editor-toolbar">
+                            <button><i class="fas fa-bold"></i></button>
+                            <button><i class="fas fa-italic"></i></button>
+                            <button><i class="fas fa-list-ul"></i></button>
+                        </div>
+                        <div class="editor-content" contenteditable="true"></div>
+                        <button class="save-btn">Save</button>
+                        <button class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>Care Requirements</h3>
+                    <div id="breedCare">
+                        <p>Golden Retrievers require regular exercise and grooming. They shed moderately throughout the year and heavily during shedding seasons. Regular veterinary check-ups are recommended.</p>
+                    </div>
+                    <div class="editor-container" id="careEditor">
+                        <div class="editor-toolbar">
+                            <button><i class="fas fa-bold"></i></button>
+                            <button><i class="fas fa-italic"></i></button>
+                            <button><i class="fas fa-list-ul"></i></button>
+                        </div>
+                        <div class="editor-content" contenteditable="true"></div>
+                        <button class="save-btn">Save</button>
+                        <button class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="adoption-section">
+            <h2><i class="fas fa-home"></i> Adoption Centers</h2>
+            <div class="location-selector">
+                <select id="stateSelect">
+                    <option value="">Select State</option>
+                    <option value="maharashtra">Maharashtra</option>
+                    <option value="delhi">Delhi</option>
+                    <option value="karnataka">Karnataka</option>
+                </select>
+                <select id="citySelect">
+                    <option value="">Select City</option>
+                </select>
+                <button class="edit-btn" id="showAddCenterBtn"><i class="fas fa-plus"></i> Add Center</button>
+            </div>
+            
+            <div class="add-center-form" id="addCenterForm">
+                <h3>Add New Adoption Center</h3>
+                <form id="centerForm">
+                    <input type="text" id="centerName" placeholder="Center Name" required>
+                    <input type="text" id="centerAddress" placeholder="Address" required>
+                    <input type="text" id="centerPhone" placeholder="Phone Number" required>
+                    <button type="submit" class="save-btn">Submit</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </form>
+            </div>
+            
+            <div class="adoption-centers" id="adoptionCenters">
+                <p>Please select a state and city to view adoption centers</p>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h2><i class="fas fa-comments"></i> Community Advice</h2>
+            <div class="comment-form">
+                <textarea id="newComment" placeholder="Share your advice or experience with this breed..." required></textarea>
+                <button id="postCommentBtn" class="save-btn">Post Comment</button>
+            </div>
+            
+            <div id="commentsList">
+                <p>Loading comments...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check authentication
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("Please log in to access this page.");
+                window.location.href = "index.html";
+                return;
+            }
+            
+            // Get current user info
+            let currentUser = null;
+            try {
+                const tokenData = JSON.parse(atob(token.split('.')[1]));
+                currentUser = {
+                    id: tokenData.id,
+                    name: tokenData.firstName + ' ' + tokenData.lastName
+                };
+            } catch (e) {
+                console.error("Error parsing token:", e);
+            }
+            
+            // Load breed data from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const breedId = urlParams.get('breed') || 'golden-retriever';
+            
+            // Setup edit functionality
+            setupEditors();
+            
+            // Setup adoption center functionality
+            setupAdoptionCenters(currentUser);
+            
+            // Setup comments
+            setupComments(breedId, currentUser);
+        });
+        
+        function setupEditors() {
+            const editBtn = document.getElementById("editInfoBtn");
+            const descEditor = document.getElementById("descEditor");
+            const careEditor = document.getElementById("careEditor");
+            const descContent = document.getElementById("breedDescription");
+            const careContent = document.getElementById("breedCare");
+            
+            editBtn.addEventListener("click", function() {
+                const isEditing = descEditor.style.display === "block";
+                
+                if (isEditing) {
+                    // Cancel editing
+                    descEditor.style.display = "none";
+                    careEditor.style.display = "none";
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Info';
+                } else {
+                    // Start editing
+                    descEditor.style.display = "block";
+                    careEditor.style.display = "block";
+                    descEditor.querySelector(".editor-content").innerHTML = descContent.innerHTML;
+                    careEditor.querySelector(".editor-content").innerHTML = careContent.innerHTML;
+                    editBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Editing';
+                }
+            });
+            
+            // Save buttons
+            descEditor.querySelector(".save-btn").addEventListener("click", function() {
+                descContent.innerHTML = descEditor.querySelector(".editor-content").innerHTML;
+                descEditor.style.display = "none";
+                // In real app, save to server
+            });
+            
+            careEditor.querySelector(".save-btn").addEventListener("click", function() {
+                careContent.innerHTML = careEditor.querySelector(".editor-content").innerHTML;
+                careEditor.style.display = "none";
+                // In real app, save to server
+            });
+            
+            // Cancel buttons
+            descEditor.querySelector(".cancel-btn").addEventListener("click", function() {
+                descEditor.style.display = "none";
+            });
+            
+            careEditor.querySelector(".cancel-btn").addEventListener("click", function() {
+                careEditor.style.display = "none";
+            });
+        }
+        
+        function setupAdoptionCenters(currentUser) {
+            const stateSelect = document.getElementById("stateSelect");
+            const citySelect = document.getElementById("citySelect");
+            const showAddBtn = document.getElementById("showAddCenterBtn");
+            const addForm = document.getElementById("addCenterForm");
+            const centerForm = document.getElementById("centerForm");
+            const centersContainer = document.getElementById("adoptionCenters");
+
+            // State-city mapping
+            const cities = {
+                maharashtra: ["Mumbai", "Pune", "Nagpur"],
+                delhi: ["New Delhi", "Noida", "Gurgaon"],
+                karnataka: ["Bangalore", "Mysore", "Hubli"]
+            };
+
+            stateSelect.addEventListener("change", function() {
+                const state = this.value;
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                
+                if (state && cities[state]) {
+                    cities[state].forEach(city => {
+                        const option = document.createElement("option");
+                        option.value = city.toLowerCase();
+                        option.textContent = city;
+                        citySelect.appendChild(option);
+                    });
+                }
+                loadCenters();
+            });
+
+            citySelect.addEventListener("change", loadCenters);
+
+            // Toggle form visibility
+            showAddBtn.addEventListener("click", function() {
+                addForm.style.display = addForm.style.display === "block" ? "none" : "block";
+            });
+
+            // Cancel button
+            centerForm.querySelector(".cancel-btn").addEventListener("click", function() {
+                addForm.style.display = "none";
+                centerForm.reset();
+            });
+
+            // Form submission
+            centerForm.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const name = document.getElementById("centerName").value;
+                const address = document.getElementById("centerAddress").value;
+                const phone = document.getElementById("centerPhone").value;
+                const state = stateSelect.value;
+                const city = citySelect.value;
+
+                if (!state || !city) {
+                    alert("Please select both state and city");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/api/centers", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`
+                        },
+                        body: JSON.stringify({ name, address, phone, state, city })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        addForm.style.display = "none";
+                        centerForm.reset();
+                        loadCenters();
+                    } else {
+                        alert(data.error || "Failed to add center");
+                    }
+                } catch (err) {
+                    console.error("Error adding center:", err);
+                    alert("Error adding center. Please try again.");
+                }
+            });
+
+            async function loadCenters() {
+                const state = stateSelect.value;
+                const city = citySelect.value;
+                
+                if (!state || !city) {
+                    centersContainer.innerHTML = "<p>Please select both state and city</p>";
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`/api/centers?state=${state}&city=${city}`);
+                    if (!response.ok) throw new Error("Failed to load centers");
+                    
+                    const centers = await response.json();
+                    
+                    centersContainer.innerHTML = "";
+                    if (centers.length === 0) {
+                        centersContainer.innerHTML = "<p>No centers found for this location</p>";
+                        return;
+                    }
+                    
+                    centers.forEach(center => {
+                        const card = document.createElement("div");
+                        card.className = "center-card";
+                        card.innerHTML = `
+                            <h3>${center.name}</h3>
+                            <p><strong>Address:</strong> ${center.address}</p>
+                            <p><strong>Phone:</strong> ${center.phone}</p>
+                            ${currentUser ? `<p><small>Added by: ${center.addedBy?.name || 'User'}</small></p>` : ''}
+                        `;
+                        centersContainer.appendChild(card);
+                    });
+                } catch (err) {
+                    console.error("Error loading centers:", err);
+                    centersContainer.innerHTML = "<p>Error loading centers. Please try again.</p>";
+                }
+            }
+        }
+
+        function setupComments(breedId, currentUser) {
+            const commentForm = document.querySelector(".comment-form");
+            const postCommentBtn = document.getElementById("postCommentBtn");
+            const commentsList = document.getElementById("commentsList");
+            const newCommentInput = document.getElementById("newComment");
+
+            async function loadComments() {
+                try {
+                    const response = await fetch(`/api/comments?breedId=${breedId}`);
+                    if (!response.ok) throw new Error("Failed to load comments");
+                    
+                    const comments = await response.json();
+                    
+                    commentsList.innerHTML = "";
+                    if (comments.length === 0) {
+                        commentsList.innerHTML = "<p>No comments yet. Be the first to share!</p>";
+                        return;
+                    }
+                    
+                    comments.forEach(comment => {
+                        const commentDiv = document.createElement("div");
+                        commentDiv.className = "comment";
+                        commentDiv.innerHTML = `
+                            <div class="comment-header">
+                                <span><strong>${comment.userName}</strong> - ${new Date(comment.createdAt).toLocaleString()}</span>
+                            </div>
+                            <p>${comment.content}</p>
+                        `;
+                        commentsList.appendChild(commentDiv);
+                    });
+                } catch (err) {
+                    console.error("Error loading comments:", err);
+                    commentsList.innerHTML = "<p>Error loading comments. Please try again.</p>";
+                }
+            }
+
+            postCommentBtn.addEventListener("click", async function(e) {
+                e.preventDefault();
+                const content = newCommentInput.value.trim();
+                
+                if (!content) {
+                    alert("Please enter a comment");
+                    return;
+                }
+                
+                if (!currentUser) {
+                    alert("You need to be logged in to comment");
+                    return;
+                }
+                
+                try {
+                    const response = await fetch("/api/comments", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`
+                        },
+                        body: JSON.stringify({ 
+                            breedId,
+                            content,
+                            userName: currentUser.name
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        newCommentInput.value = "";
+                        loadComments();
+                    } else {
+                        alert(data.error || "Failed to post comment");
+                    }
+                } catch (err) {
+                    console.error("Error posting comment:", err);
+                    alert("Error posting comment. Please try again.");
+                }
+            });
+
+            // Initial load
+            loadComments();
+        }
+        
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

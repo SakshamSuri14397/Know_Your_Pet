@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetWiki - Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Your existing CSS styles remain exactly the same */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #6a3093, #a044ff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .container {
+      background: white;
+      width: 90%;
+      max-width: 450px;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .form-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #6a3093;
+    }
+    
+    .input-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6a3093;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #a044ff;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #6a3093;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+    
+    .btn:hover {
+      background: #a044ff;
+    }
+    
+    .switch-form {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+    
+    .switch-btn {
+      background: none;
+      border: none;
+      color: #6a3093;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    #loginContainer, #registerContainer {
+      display: none;
+    }
+    
+    #loginContainer {
+      display: block;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="loginContainer">
+    <h1 class="form-title">Login</h1>
+    
+    <form id="loginForm">
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="email" placeholder="Email" required>
+        <div class="error-message" id="loginEmailError"></div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="password" placeholder="Password" required>
+        <div class="error-message" id="loginPasswordError"></div>
+      </div>
+      
+      <button type="submit" class="btn" id="loginBtn">Login</button>
+    </form>
+    
+    <div class="switch-form">
+      <p>Don't have an account? <button class="switch-btn" id="showRegisterBtn">Register</button></p>
+    </div>
+  </div>
+  
+  <div class="container" id="registerContainer">
+    <h1 class="form-title">Register</h1>
+    
+    <form id="registerForm">
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="firstName" placeholder="First Name" required>
+        <div class="error-message" id="firstNameError"></div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="text" id="lastName" placeholder="Last Name" required>
+        <div class="error-message" id="lastNameError"></div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-envelope"></i>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <div class="error-message" id="regEmailError"></div>
+      </div>
+      
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="regPassword" placeholder="Password" required minlength="6">
+        <div class="error-message" id="regPasswordError"></div>
+      </div>
+      
+      <button type="submit" class="btn" id="registerBtn">Register</button>
+    </form>
+    
+    <div class="switch-form">
+      <p>Already have an account? <button class="switch-btn" id="showLoginBtn">Login</button></p>
+    </div>
+  </div>
+  
+  <script>
+    // Check if user is already logged in
+if (localStorage.getItem("token")) {
+  // Optional: You can keep this if you want logged-in users to redirect
+  // window.location.href = "home.html";
+  
+  // Or better - remove the token check completely to always show login
+  localStorage.removeItem("token"); 
+}
+    // DOM Elements
+   // DOM Elements
+   const loginContainer = document.getElementById("loginContainer");
+    const registerContainer = document.getElementById("registerContainer");
+    const showRegisterBtn = document.getElementById("showRegisterBtn");
+    const showLoginBtn = document.getElementById("showLoginBtn");
+    
+    // Toggle between login and register forms
+    showRegisterBtn.addEventListener("click", () => {
+      loginContainer.style.display = "none";
+      registerContainer.style.display = "block";
+    });
+    
+    showLoginBtn.addEventListener("click", () => {
+      registerContainer.style.display = "none";
+      loginContainer.style.display = "block";
+    });
+    
+    // Login Function
+    document.getElementById("loginForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      
+      try {
+        const response = await fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          alert("Login successful! Redirecting to home page...");
+          window.location.href = "home.html";
+        } else {
+          alert(data.error || "Login failed. Please check your credentials.");
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+      }
+    });
+    
+    // Register Function
+    document.getElementById("registerForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      
+      try {
+        const response = await fetch("http://localhost:5000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ firstName, lastName, email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          alert("Registration successful! You can now login.");
+          registerContainer.style.display = "none";
+          loginContainer.style.display = "block";
+        } else {
+          if (data.error.includes("duplicate key")) {
+            alert("Email already exists. Please use a different email.");
+          } else {
+            alert(data.error || "Registration failed. Please try again.");
+          }
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+      }
+    });
+    
+    // Check if user is already logged in
+    if (localStorage.getItem("token")) {
+      window.location.href = "home.html";
+    }
+    
+  </script>
+</body>
+</html>
